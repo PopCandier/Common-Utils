@@ -85,13 +85,20 @@ public class PDFUtils {
 
     //段落
     public Paragraph createParagraph(String context) throws DocumentException {
-        Paragraph paragraph = new Paragraph(context);
-
-            return stylePackage.setDefaultParagraphStyle(paragraph);
-
-            //document.add(paragraph);
-
+        //Paragraph paragraph = new Paragraph(context,stylePackage.getContextTitle());
+        Paragraph paragraph = new Paragraph(context,stylePackage.getContextFont());
+        try { return stylePackage.setDefaultParagraphStyle(paragraph);
+        }finally { document.add(paragraph); }
+        //自己定制问题
     }
+    public Paragraph createParagraph(String context,@Nullable Integer alignType) throws DocumentException {
+        //Paragraph paragraph = new Paragraph(context,stylePackage.getContextTitle());
+        Paragraph paragraph = new Paragraph(context,stylePackage.getContextFont());
+        try { return stylePackage.setParagraphStyle(paragraph,alignType);
+        }finally { document.add(paragraph); }
+        //自己定制问题
+    }
+
     /**
      * 样式打包
      */
@@ -102,7 +109,7 @@ public class PDFUtils {
         private  Font tableFont;//适用于
         private  Font tableTileFont;
 
-        private  final Float SPACE_NUMBER_FIVE = 5f;//对于前后间距比较好看的位置
+        private  final Float SPACE_NUMBER_FIVE = 2f;//对于前后间距比较好看的位置
         private final Float INDENT_FIRST_TWO = 2f;//对于首行缩进比较好看的位置
 
         //------字体的设置-----end
@@ -116,7 +123,7 @@ public class PDFUtils {
          */
         public Paragraph setDefaultParagraphStyle(Paragraph paragraph){
             if(ObjectUtils.checkObjcetIsNull(paragraph)){return null;}
-            paragraph.setFont(contextFont);
+            //paragraph.setFont(contextTitle);
             paragraph.setFirstLineIndent(INDENT_FIRST_TWO);
             paragraph.setAlignment(Element.ALIGN_LEFT);
             paragraph.setSpacingAfter(SPACE_NUMBER_FIVE);
@@ -128,12 +135,11 @@ public class PDFUtils {
          * 设置段落样式->设置段落的对齐情况
          * @param paragraph 段落
          * @param alignType 居中类型 Element.ALIGN_CENTER
-         * @param font 使用的文字类型
+         *
          * @return  段落
          */
-        public Paragraph setParagraphStyle(Paragraph paragraph,@Nullable Font font,@Nullable Integer alignType){
+        public Paragraph setParagraphStyle(Paragraph paragraph,@Nullable Integer alignType){
             if(ObjectUtils.checkObjcetIsNull(paragraph)){return null;}
-            if(ObjectUtils.checkObjcetIsNotNull(font)){ paragraph.setFont(font); }
             if(NumberUtils.checkNumberIsNotNull(alignType)){paragraph.setAlignment(alignType);}
             return paragraph;
         }
@@ -202,8 +208,8 @@ public class PDFUtils {
 
         private  void doInitFontStyle() throws IOException, DocumentException {
             baseFont = BaseFont.createFont("STSong-Light","UniGB-UCS2-H",BaseFont.NOT_EMBEDDED);
-            contextFont = new Font(baseFont, 10, Font.BOLD);
-            contextTitle = new Font(baseFont,16, Font.NORMAL);
+            contextFont = new Font(baseFont, 10, Font.NORMAL);
+            contextTitle = new Font(baseFont,16, Font.BOLD);
             tableTileFont=new Font(baseFont,12,Font.BOLD);
             tableFont = new Font(baseFont,11,Font.NORMAL);
         }
