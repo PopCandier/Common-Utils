@@ -85,7 +85,6 @@ public void TestPdfUtils() throws IOException, DocumentException {
     document.close();
     os.flush();
     os.close();
-    //存在问题：字体貌似无法生效，等待解决
 }
 ```
 
