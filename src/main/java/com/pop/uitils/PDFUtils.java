@@ -1,8 +1,7 @@
 package com.pop.uitils;
 
 import com.lowagie.text.*;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.*;
 import com.sun.istack.internal.Nullable;
 
 import java.io.IOException;
@@ -15,6 +14,7 @@ import java.io.OutputStream;
 public class PDFUtils {
 
     private StylePackage stylePackage;
+    private TableMaker tableMaker;
 
     private  Document document;//主文档
     private  PdfWriter pdfWriter;//写入者
@@ -54,10 +54,16 @@ public class PDFUtils {
     private static class PDFHolder{
         private static final PDFUtils pdf=new PDFUtils();
     }
+
+    public TableMaker getTableMaker() {
+        return tableMaker;
+    }
+
     private PDFUtils() {
         try {
             document = new Document();
             stylePackage = new StylePackage();
+            tableMaker = new TableMaker();
             setOutputStream(osi);
             document.open();
 
@@ -83,6 +89,17 @@ public class PDFUtils {
     //设置页脚 Paragraph
 
 
+    /**
+     * 每个表格生成的时候必须定义一共有多少格子
+     *
+     */
+    public void createTable(){
+
+    }
+
+    //专门制作单元格的类，主要用于快捷创建表格
+    //public List<PdfCell> generateColumCells(Integer number)
+
     //段落
     public Paragraph createParagraph(String context) throws DocumentException {
         //Paragraph paragraph = new Paragraph(context,stylePackage.getContextTitle());
@@ -99,12 +116,13 @@ public class PDFUtils {
         //自己定制问题
     }
 
+
     /**
      * 样式打包
      */
-    public class StylePackage{
+    private class StylePackage{
         private  BaseFont baseFont;//自定义字体
-        private Font contextTitle;
+        private  Font contextTitle;
         private  Font contextFont;//正文字体
         private  Font tableFont;//适用于
         private  Font tableTileFont;
@@ -162,6 +180,36 @@ public class PDFUtils {
             return paragraph;
         }
 
+        //------------------表格的样式申明
+        private static final int ONEHUNDRED=100;
+        private static final float FIVE=5f;
+        private static final float THREE=3f;
+        /**
+         * 默认 表格内容居中，最大宽高度
+         * @param table
+         * @param total 总比例
+         * @param present 分别比例
+         * @return
+         */
+        public PdfPTable setDefaultTaleStyle(PdfPTable table,Float total,float... present) throws DocumentException {
+            table.setWidthPercentage(ONEHUNDRED);// 宽度为100%
+            table.setHorizontalAlignment(PdfPTable.ALIGN_CENTER);// 居中
+            table.setTotalWidth(total);
+            table.setWidths(present);
+            return table;
+        }
+
+        public PdfPCell setDefaultCellStyle(PdfPCell cell,int col,@Nullable Integer align){
+            cell.setColspan(col);
+            cell.setPaddingTop(THREE);
+            cell.setPaddingBottom(FIVE);
+            if(NumberUtils.checkNumberIsNull(align)){
+                cell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
+                return cell; }
+            cell.setHorizontalAlignment(align);
+            return cell;
+        }
+
         public Font getContextTitle() {
             return contextTitle;
         }
@@ -212,6 +260,46 @@ public class PDFUtils {
             contextTitle = new Font(baseFont,16, Font.BOLD);
             tableTileFont=new Font(baseFont,12,Font.BOLD);
             tableFont = new Font(baseFont,11,Font.NORMAL);
+        }
+
+    }
+
+    public class TableMaker{
+        private PdfPTable table;
+        private int columns=0;
+
+        private TableMaker() { }
+
+        public void clear(){
+            table = null;//for gc
+        }
+
+        public PdfPTable getTable() {
+            return table;
+        }
+
+        public TableMaker createTable(Integer colum, float totalNumber, float... precent) throws DocumentException {
+            columns = colum;
+            table = new PdfPTable(columns);
+            stylePackage.setDefaultTaleStyle(table,totalNumber,precent);
+            return tableMaker;
+        }
+
+        public TableMaker generateCell(String context,Integer align,int col){
+            PdfPCell cell = new PdfPCell(new Paragraph(context,stylePackage.getTableFont()));
+            stylePackage.setDefaultCellStyle(cell,col,align);
+            table.addCell(cell);
+            return tableMaker;
+        }
+        public TableMaker generateCell(String context,@Nullable Integer align,int col,Font font){
+            PdfPCell cell = new PdfPCell(new Paragraph(context,font));
+            stylePackage.setDefaultCellStyle(cell,col,align);
+            table.addCell(cell);
+            return tableMaker;
+        }
+        public TableMaker generateTableTitle(String context){
+            generateCell(context,null,columns,stylePackage.getTableTileFont());
+            return tableMaker;
         }
 
     }
