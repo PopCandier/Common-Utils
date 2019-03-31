@@ -61,6 +61,9 @@ public class PDFUtils {
 
     private PDFUtils() {
         try {
+            if(null!=PDFHolder.pdf){
+                throw new RuntimeException("can not create more instance");
+            }
             document = new Document();
             stylePackage = new StylePackage();
             tableMaker = new TableMaker();
