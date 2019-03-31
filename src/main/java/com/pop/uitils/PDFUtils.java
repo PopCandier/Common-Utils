@@ -59,6 +59,10 @@ public class PDFUtils {
         return tableMaker;
     }
 
+    private Object readResolve(){
+        return PDFHolder.pdf;//防止序列化破壞
+    }
+
     private PDFUtils() {
         try {
             if(null!=PDFHolder.pdf){
