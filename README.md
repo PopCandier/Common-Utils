@@ -140,5 +140,30 @@ public void TestPdfTable() throws Exception {
 
 
 
+#### HTML
 
+将会拼装完成返回一个完整的HTML元素
+
+```java
+Map<String,String> map = new HashMap<String,String>(){{
+            put("1111","2222");
+            put("3333","2222");
+            put("4444","2222");
+            put("5555","2222");
+            put("6666","2222");
+            put("7777","2222");
+        }};
+
+        HTML.Select select = HTML.Select.getInstance();
+        select.appendOption(map);
+        select.setOnChange("test()");
+        select.appendToHTML();
+        System.out.println(HTML.getBody());
+```
+
+首先每一个元素都可以通过HTML.**.getInstance()获得，并可以set需要的任何属性
+
+当你对一个属性设置完成后，必须`appendToHTML`，添加到当前HTML主题中去
+
+然后通过`HTML.getBody()`获得完成拼接后的元素。
 
