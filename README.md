@@ -167,3 +167,29 @@ Map<String,String> map = new HashMap<String,String>(){{
 
 然后通过`HTML.getBody()`获得完成拼接后的元素。
 
+----
+
+#### ShiroUtils
+
+该工具主要为了完成`shiro`安全所打包的工具类，包括`shiro`的加密和权限。
+
+```java
+/**
+     * Base64 加密
+     * @param src
+     * @return
+     */
+    public static String encodeBase64(String src){ return Base64.encodeToString(src.getBytes()); }
+
+    /**
+     * Base64 解密
+     * @param src
+     * @return
+     */
+    public static String decodeBase64(String src){ return Base64.decodeToString(src.getBytes());}
+//shiro内置的安全service配置
+ public static String serviceEncode(String src){
+        return hashService.computeHash(builder.setSource(ByteSource.Util.bytes(src.getBytes())).build()).toString();
+    }
+```
+
