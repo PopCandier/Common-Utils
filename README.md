@@ -193,3 +193,127 @@ Map<String,String> map = new HashMap<String,String>(){{
     }
 ```
 
+----
+
+#### EChars
+
+该工具可以生成`echars`图标
+
+```javaj
+@GetMapping(value="/echars",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String getCharss(){
+
+		List<Member> members = new ArrayList<Member>();
+		members.add(new Member("1","2","3","4"));
+		members.add(new Member("5","6","7","8"));
+		members.add(new Member("9","3","5","7"));
+		members.add(new Member("9","2","3","4"));
+		members.add(new Member("1","5","3","8"));
+
+		ECharts eCharts=ECharts.getInstance();
+		eCharts.setSeriesType(SeriesType.BAR);
+		eCharts.setXAxisData(new String[]{"周一","周二","周三","周四","周五"});
+		eCharts.setSeriesData(members, new SeriesMapper() {
+					@Override
+					public Map mapRow(Map<String, String> map) {
+						map.put("mid","号码");
+						map.put("name","名字");
+						map.put("addr","住址");
+						map.put("info","信息");
+						return map;
+					}
+				}
+		);
+
+		return new Gson().toJson(eCharts);
+	}
+```
+
+输出效果
+
+```json
+{
+    "tooltip": {
+        "trigger": "axis",
+        "axisPointer": {
+            "type": "shadow"
+        }
+    },
+    "legend": {},
+    "grid": {
+        "left": "3%",
+        "right": "4%",
+        "bottom": "3%",
+        "containLabel": true
+    },
+    "xAxis": [
+        {
+            "type": "category",
+            "data": [
+                "周一",
+                "周二",
+                "周三",
+                "周四",
+                "周五"
+            ]
+        }
+    ],
+    "yAxis": [
+        {
+            "type": "value"
+        }
+    ],
+    "series": [
+        {
+            "name": "名字",
+            "type": "bar",
+            "data": [
+                "2",
+                "6",
+                "3",
+                "2",
+                "5"
+            ]
+        },
+        {
+            "name": "号码",
+            "type": "bar",
+            "data": [
+                "1",
+                "5",
+                "9",
+                "9",
+                "1"
+            ]
+        },
+        {
+            "name": "住址",
+            "type": "bar",
+            "data": [
+                "3",
+                "7",
+                "5",
+                "3",
+                "3"
+            ]
+        },
+        {
+            "name": "信息",
+            "type": "bar",
+            "data": [
+                "4",
+                "8",
+                "7",
+                "4",
+                "8"
+            ]
+        }
+    ]
+}
+```
+
+
+
+
+
