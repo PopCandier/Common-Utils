@@ -153,3 +153,30 @@ public class MyRealm1 implements Realm {
 
 
 
+### PasswordService/CredentialsMatcher
+
+Shiro提供了PasswordService及CredentialsMatcher用于提供加密密码及验证加密功能。
+
+他们两个提供了分别的实现，PasswordService的默认实现
+
+DefaultPasswordServiced，还有HashingCredentialsMatcher
+
+的实现，前者提供密码加密，后者提供解密或者验证id
+
+
+
+ZR_SHLX :商会类型
+
+ZR_SFTJDJ：
+
+江西省（包括下级组织）商会是否在民政部门登记统计 1
+
+江西省（包括下级组织）商会是否建有党组织统计  2
+
+江西省（包括下级组织）商会工作人员情况统计 3  
+
+
+
+
+
+ZR_SHINFO：商会信息表

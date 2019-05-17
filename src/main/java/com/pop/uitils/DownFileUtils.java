@@ -53,17 +53,21 @@ public class DownFileUtils  {
 
     }
 
+    public static void uploadFileForWeb(HttpServletRequest request, String filePath){
+        File file = new File(filePath);
+        uploadFileForWeb(request,file);
+    }
     /**
      * 上传文件
      * @param request
-     * @param filePath
+     * @param file
      */
-    public static void uploadFileForWeb(HttpServletRequest request,String filePath){
+    public static void uploadFileForWeb(HttpServletRequest request, File file){
         BufferedInputStream bis = null;
         FileOutputStream fos = null;
         try {
             bis = new BufferedInputStream(request.getInputStream());
-            fos = new FileOutputStream(filePath);
+            fos = new FileOutputStream(file);
             int len =0;
             byte[] buffer = new byte[1024];
             while((len=bis.read(buffer))!=-1){
