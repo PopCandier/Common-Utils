@@ -18,6 +18,11 @@ import java.io.IOException;
 public class MyTest {
 
     @Test
+    public void copyTest(){
+        DownFileUtils.copy("D://1.txt","D://2.txt");
+    }
+
+    @Test
     public void TestPdfUtils() throws IOException, DocumentException {
         File file = new File("/demo.pdf");
         System.out.println(file.getAbsolutePath());

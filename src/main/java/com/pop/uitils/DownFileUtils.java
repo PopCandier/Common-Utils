@@ -6,6 +6,9 @@ package com.pop.uitils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
+import java.nio.channels.FileChannel;
 
 /**
  * @author Pop
@@ -19,6 +22,8 @@ public class DownFileUtils  {
     private static final String WEB_CONTENT_TYPE_UTF8="text/html;charset=utf8";
 
     private static final String WEB_ERR_MESSAGE_UNEXISTS="fileName was undefine!";
+
+    private static final int BYTE_SIZE = 1024;
 
     /**
      * 文件的下载
@@ -65,7 +70,7 @@ public class DownFileUtils  {
             bis = new BufferedInputStream(request.getInputStream());
             fos = new FileOutputStream(filePath);
             int len =0;
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[BYTE_SIZE];
             while((len=bis.read(buffer))!=-1){
                 fos.write(buffer,0,len);
             }
@@ -76,6 +81,55 @@ public class DownFileUtils  {
             close(bis,fos);
         }
     };
+
+    /**
+     * 拷贝
+     * @param from
+     * @param to
+     */
+    public static void copy(String from,String to){
+        copy(new File(from),new File(to));
+    }
+
+    public static void copy(File from,File to){
+        if(!from.exists()){return;}
+        ByteBuffer buffer = ByteBuffer.allocateDirect(BYTE_SIZE);
+        FileInputStream inputStream = null;
+        FileOutputStream outputStream = null;
+        FileChannel iChannel = null;
+        FileChannel oChannel = null;
+        try{
+            inputStream = new FileInputStream(from);
+            outputStream = new FileOutputStream(to);
+            iChannel= inputStream.getChannel();
+            oChannel = outputStream.getChannel();
+            while(true){
+                buffer.clear();
+                int i = iChannel.read(buffer);
+                if(i==-1){break;}
+                buffer.flip();
+                oChannel.write(buffer);
+            }
+        }catch (Throwable e){
+
+        }finally {
+            closeChannel(iChannel,oChannel);
+            close(inputStream,outputStream);
+        }
+
+    }
+
+    public static void closeChannel(FileChannel ... channels){
+        for(FileChannel channel:channels){
+            if(null!=channel){
+                try {
+                    channel.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     public static void close(InputStream is,OutputStream os){
         try {
