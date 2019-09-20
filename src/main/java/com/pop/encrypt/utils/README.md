@@ -60,3 +60,4 @@ clientLogin(code,signature);
         });
 ```
 
+可以自己定义接下里的方案。
