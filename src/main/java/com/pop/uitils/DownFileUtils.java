@@ -52,6 +52,7 @@ public class DownFileUtils  {
             while((len=bis.read())!=-1){
                 bos.write(len);
             }
+            bos.flush();
         }catch (Exception e){e.printStackTrace();}finally{
            close(bis,null);
         }
